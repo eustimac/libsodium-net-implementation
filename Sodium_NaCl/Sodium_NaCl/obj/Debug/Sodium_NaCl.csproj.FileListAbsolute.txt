@@ -1,0 +1,8 @@
+C:\Users\Personal\Desktop\Sodium_NaCl\Sodium_NaCl\bin\Debug\Sodium_NaCl.exe.config
+C:\Users\Personal\Desktop\Sodium_NaCl\Sodium_NaCl\bin\Debug\Sodium_NaCl.exe
+C:\Users\Personal\Desktop\Sodium_NaCl\Sodium_NaCl\bin\Debug\Sodium_NaCl.pdb
+C:\Users\Personal\Desktop\Sodium_NaCl\Sodium_NaCl\bin\Debug\Sodium.dll
+C:\Users\Personal\Desktop\Sodium_NaCl\Sodium_NaCl\bin\Debug\Sodium.pdb
+C:\Users\Personal\Desktop\Sodium_NaCl\Sodium_NaCl\obj\Debug\Sodium_NaCl.csprojResolveAssemblyReference.cache
+C:\Users\Personal\Desktop\Sodium_NaCl\Sodium_NaCl\obj\Debug\Sodium_NaCl.exe
+C:\Users\Personal\Desktop\Sodium_NaCl\Sodium_NaCl\obj\Debug\Sodium_NaCl.pdb
