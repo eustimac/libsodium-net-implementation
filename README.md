@@ -1,4 +1,4 @@
 libsodium-net-implementation
 ============================
 
-Implementation of C# wrapper for Sodium (fork of NaCl)
+Implementation of C# wrapper for Sodium (which is a fork of NaCl)
