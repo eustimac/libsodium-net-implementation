@@ -4,16 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Security.Cryptography;
 
-namespace Sodium_NaCl {
+namespace Sodium_NaCl_NET {
     class Program {
 
         static void Main(string[] args) {
-            
+
             Program program = new Program();
 
-            while (true) { 
-                program.Menu();                         
+            while (true) {
+                program.Menu();
             }
         }
 
@@ -51,19 +52,28 @@ namespace Sodium_NaCl {
         }
 
         #region SYMMETRIC
-        void SymmetricBox() { 
+        void SymmetricBox() {
 
-            byte[] data, nonce, key, encrypted, decrypted;            
+            String choice;
+            byte[] data, nonce, key, encrypted, decrypted;
 
             data = InputData();
             key = Sodium.SecretBox.GenerateKey();
             nonce = Sodium.SecretBox.GenerateNonce();
-           
-            encrypted = Sodium.SecretBox.Create(data, nonce, key);
-            decrypted = Sodium.SecretBox.Open(encrypted, nonce, key);
 
-            if (Encoding.UTF8.GetString(data) == Encoding.UTF8.GetString(decrypted)) Console.WriteLine("Input string and decrypted string are the same!");
-            else Console.WriteLine("Input string and decrypted string aren't the same!");
+            encrypted = Sodium.SecretBox.Create(data, nonce, key);
+
+            Console.WriteLine("Tamper with encrypted data? (y/n)");
+            choice = Console.ReadLine();
+            if (choice == "y") encrypted[32] = 1;
+
+            try {
+                decrypted = Sodium.SecretBox.Open(encrypted, nonce, key);
+                Console.WriteLine("Successfully decrypted! Text: {0}", Encoding.UTF8.GetString(decrypted));
+            }
+            catch (CryptographicException) {
+                Console.WriteLine("Could not decrypt. Message was tampered with!");
+            }
 
             Console.ReadLine();
         }
@@ -76,13 +86,13 @@ namespace Sodium_NaCl {
             key = Sodium.OneTimeAuth.GenerateKey();
             dataSigned = Sodium.OneTimeAuth.Sign(data, key);
 
-            Console.WriteLine("Tamper the data now, if you wish,  then press enter.");
+            Console.WriteLine("Tamper the data now, if you wish, then press enter.");
             Console.ReadLine();
             dataNew = InputData();
 
-            if (Sodium.OneTimeAuth.Verify(dataNew, dataSigned, key)) 
+            if (Sodium.OneTimeAuth.Verify(dataNew, dataSigned, key))
                 Console.WriteLine("Signature verified!");
-            else 
+            else
                 Console.WriteLine("Signature illegitimate!");
 
             Console.ReadLine();
@@ -104,6 +114,7 @@ namespace Sodium_NaCl {
         #region ASYMMETRIC
         void AsymmetricBox() {
 
+            String choice;
             byte[] data, nonce, encrypted, decrypted;
             Sodium.KeyPair keypair = new Sodium.KeyPair();
 
@@ -114,21 +125,41 @@ namespace Sodium_NaCl {
             encrypted = Sodium.PublicKeyBox.Create(data, nonce, keypair.PrivateKey, keypair.PublicKey);
             decrypted = Sodium.PublicKeyBox.Open(encrypted, nonce, keypair.PrivateKey, keypair.PublicKey);
 
-            if (Encoding.UTF8.GetString(data) == Encoding.UTF8.GetString(decrypted)) Console.WriteLine("Input string and decrypted string are the same!");
-            else Console.WriteLine("Input string and decrypted string aren't the same!");
+            Console.WriteLine("Tamper with encrypted data? (y/n)");
+            choice = Console.ReadLine();
+            if (choice == "y") encrypted[32] = 1;
 
+            try {
+                decrypted = Sodium.PublicKeyBox.Open(encrypted, nonce, keypair.PrivateKey, keypair.PublicKey);
+                Console.WriteLine("Successfully decrypted! Text: {0}", Encoding.UTF8.GetString(decrypted));
+            }
+            catch (CryptographicException) {
+                Console.WriteLine("Could not decrypt. Message was tampered with!");
+            }
             Console.ReadLine();
         }
 
         void AsymmetricAuth() {
 
-            byte[] data, dataSigned;
+            byte[] data, dataSigned, dataNew, dataNewSigned;
             Sodium.KeyPair keypair = new Sodium.KeyPair();
 
             data = InputData();
             keypair = Sodium.PublicKeyAuth.GenerateKeyPair();
             dataSigned = Sodium.PublicKeyAuth.Sign(data, keypair.PrivateKey);
 
+            Console.WriteLine("Tamper the data now, if you wish, then press enter.");
+            Console.ReadLine();
+
+            dataNew = InputData();
+            dataNewSigned = Sodium.PublicKeyAuth.Sign(dataNew, keypair.PrivateKey);
+
+            if (Encoding.UTF8.GetString(Sodium.PublicKeyAuth.Verify(dataSigned, keypair.PublicKey)) == Encoding.UTF8.GetString(Sodium.PublicKeyAuth.Verify(dataNewSigned, keypair.PublicKey)))
+                Console.WriteLine("Signature verified!");
+            else
+                Console.WriteLine("Signature illegitimate!");
+
+            Console.ReadLine();
         }
         #endregion
 
@@ -146,11 +177,11 @@ namespace Sodium_NaCl {
             byte[] data;
 
             file = @"../../testFiles/testData.txt";
-            
-            if(File.Exists(file))
+
+            if (File.Exists(file))
                 using (BinaryReader reader = new BinaryReader(File.Open(file, FileMode.Open))) {
                     long totalBytes = new System.IO.FileInfo(file).Length;
-                    data = reader.ReadBytes((Int32)totalBytes);                 
+                    data = reader.ReadBytes((Int32)totalBytes);
 
                     return data;
                 }
@@ -158,8 +189,8 @@ namespace Sodium_NaCl {
             else {
                 Console.WriteLine("\nFile not found! Input text for data: ");
                 message = Console.ReadLine();
-                return GetByte(message);  
-            }       
+                return GetByte(message);
+            }
         }
         #endregion
     }

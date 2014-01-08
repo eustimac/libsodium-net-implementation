@@ -7,8 +7,8 @@
     <ProjectGuid>{C900E78B-892E-4285-BBEC-59274801EB3D}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sodium_NaCl</RootNamespace>
-    <AssemblyName>Sodium_NaCl</AssemblyName>
+    <RootNamespace>Sodium_NaCl_NET</RootNamespace>
+    <AssemblyName>Sodium_NaCl_NET</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
